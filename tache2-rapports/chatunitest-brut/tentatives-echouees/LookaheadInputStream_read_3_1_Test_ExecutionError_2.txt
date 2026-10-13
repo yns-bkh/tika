@@ -1,0 +1,165 @@
+package org.apache.tika.io;
+
+import org.apache.tika.io.LookaheadInputStream;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.io.IOException;
+import java.io.InputStream;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+public class LookaheadInputStream_read_3_1_Test {
+
+    @Mock
+    private InputStream mockStream;
+
+    private LookaheadInputStream lookaheadInputStream;
+
+    @BeforeEach
+    public void setUp() {
+        lookaheadInputStream = new LookaheadInputStream(mockStream, 10);
+    }
+
+    @Test
+    public void testReadWithAvailableData() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(5);
+        byte[] buffer = new byte[10];
+        int result = lookaheadInputStream.read(buffer, 0, 5);
+        assertEquals(5, result);
+        verify(mockStream, times(1)).read(buffer, 0, 5);
+    }
+
+    @Test
+    public void testReadWithNoAvailableData() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(-1);
+        byte[] buffer = new byte[10];
+        int result = lookaheadInputStream.read(buffer, 0, 5);
+        assertEquals(-1, result);
+        verify(mockStream, times(1)).read(buffer, 0, 5);
+    }
+
+    @Test
+    public void testReadWithException() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenThrow(new IOException("Mocked exception"));
+        byte[] buffer = new byte[10];
+        assertThrows(IOException.class, () -> lookaheadInputStream.read(buffer, 0, 5));
+        verify(mockStream, times(1)).read(buffer, 0, 5);
+    }
+
+    @Test
+    public void testReadWithBufferedData() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(5);
+        lookaheadInputStream.read(new byte[10], 0, 10);
+        byte[] buffer = new byte[10];
+        int result = lookaheadInputStream.read(buffer, 0, 5);
+        assertEquals(5, result);
+        verify(mockStream, times(1)).read(buffer, 0, 5);
+    }
+
+    @Test
+    public void testReadWithBufferedDataAndException() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(5).thenReturn(-1).thenThrow(new IOException("Mocked exception"));
+        byte[] buffer = new byte[10];
+        int result = lookaheadInputStream.read(buffer, 0, 5);
+        assertEquals(5, result);
+        result = lookaheadInputStream.read(buffer, 0, 5);
+        assertEquals(-1, result);
+        assertThrows(IOException.class, () -> lookaheadInputStream.read(buffer, 0, 5));
+        verify(mockStream, times(3)).read(buffer, anyInt(), anyInt());
+    }
+}
+
+--------------------------------------------
+Error in testReadWithAvailableData(): line 32 : Wanted but not invoked:
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    5
+);
+-> at java.base/java.io.InputStream.read(InputStream.java:282)
+
+However, there were exactly 2 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+
+Error in testReadWithNoAvailableData(): line 41 : Wanted but not invoked:
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    5
+);
+-> at java.base/java.io.InputStream.read(InputStream.java:282)
+
+However, there were exactly 3 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+mockStream.reset();
+-> at org.apache.tika.io.LookaheadInputStream.close(LookaheadInputStream.java:75)
+
+
+Error in testReadWithBufferedDataAndException(): line 70 : org.opentest4j.AssertionFailedError: Expected java.io.IOException to be thrown, but nothing was thrown.
+Error in testReadWithBufferedData(): line 59 : Wanted but not invoked:
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    5
+);
+-> at java.base/java.io.InputStream.read(InputStream.java:282)
+
+However, there were exactly 3 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    5,
+    5
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+
+Error in testReadWithException(): line 49 : Wanted but not invoked:
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    5
+);
+-> at java.base/java.io.InputStream.read(InputStream.java:282)
+
+However, there were exactly 2 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+

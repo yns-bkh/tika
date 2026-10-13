@@ -1,0 +1,42 @@
+name: IFT3913 tache 2 - tests et mutation
+
+on:
+  push:
+    branches: [ tache2 ]
+  pull_request:
+    branches: [ tache2 ]
+  workflow_dispatch:
+
+jobs:
+  tests-et-mutation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Construire tika-core (et tika-parent)
+        run: ./mvnw -B -ntp -pl tika-core -am install -DskipTests -Dcheckstyle.skip -Drat.skip -Dforbiddenapis.skip -Dossindex.skip -Dmaven.javadoc.skip
+
+      - name: Executer les tests (originaux + generes par ChatUniTest + ajoutes a la main)
+        working-directory: tika-core
+        run: >
+          ../mvnw -B -ntp test -Dcheckstyle.skip -Drat.skip
+          -Dtest='LookaheadInputStream*Test,CharsetUtils*Test'
+          -Dsurefire.failIfNoSpecifiedTests=false
+
+      - name: Analyse de mutation pitest
+        working-directory: tika-core
+        run: ../mvnw -B -ntp org.pitest:pitest-maven:mutationCoverage -Dcheckstyle.skip -Drat.skip
+
+      - name: Publier le rapport pitest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pitest-report
+          path: tika-core/target/pit-reports/

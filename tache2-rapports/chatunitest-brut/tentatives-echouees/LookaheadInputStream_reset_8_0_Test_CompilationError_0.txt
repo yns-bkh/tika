@@ -1,0 +1,64 @@
+package org.apache.tika.io;
+
+import org.apache.tika.io.LookaheadInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+public class LookaheadInputStream_reset_8_0_Test {
+
+    private LookaheadInputStream lookaheadInputStream;
+
+    private InputStream inputStream;
+
+    @BeforeEach
+    public void setUp() {
+        inputStream = mock(InputStream.class);
+        lookaheadInputStream = new LookaheadInputStream(inputStream, 10);
+    }
+
+    @Test
+    public void testReset() throws IOException {
+        // Arrange
+        int mark = 5;
+        lookaheadInputStream.mark(mark);
+        // Act
+        lookaheadInputStream.reset();
+        // Assert
+        assertEquals(mark, lookaheadInputStream.position);
+    }
+
+    @Test
+    public void testResetWithNoMark() throws IOException {
+        // Act
+        lookaheadInputStream.reset();
+        // Assert
+        assertEquals(0, lookaheadInputStream.position);
+    }
+
+    @Test
+    public void testResetWithException() throws IOException {
+        // Arrange
+        when(inputStream.reset()).thenThrow(new IOException("Mocked exception"));
+        // Act & Assert
+        assertThrows(IOException.class, () -> lookaheadInputStream.reset());
+    }
+}
+
+--------------------------------------------
+Error in LookaheadInputStream_reset_8_0_Test: line -1 : Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+Error in LookaheadInputStream_reset_8_0_Test: line -1 : Supported source version 'RELEASE_17' from annotation processor 'org.apache.tika.annotation.TikaComponentProcessor' less than -source '21'
+Error in LookaheadInputStream_reset_8_0_Test: line 33 : position has private access in org.apache.tika.io.LookaheadInputStream
+Error in LookaheadInputStream_reset_8_0_Test: line 41 : position has private access in org.apache.tika.io.LookaheadInputStream
+Error in LookaheadInputStream_reset_8_0_Test: line 47 : 'void' type not allowed here

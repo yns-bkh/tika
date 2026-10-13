@@ -1,0 +1,196 @@
+package org.apache.tika.utils;
+
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static java.util.Locale.ENGLISH;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CharsetUtils_clean_2_0_Test {
+
+    private CharsetUtils charsetUtils;
+
+    private Method forNameMethod;
+
+    @BeforeEach
+    public void setUp() throws NoSuchMethodException {
+        charsetUtils = new CharsetUtils();
+        forNameMethod = CharsetUtils.class.getDeclaredMethod("forName", String.class);
+        forNameMethod.setAccessible(true);
+    }
+
+    @Test
+    public void testCleanWithValidCharset() throws Exception {
+        String charsetName = "UTF-8";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertEquals(charsetName, result);
+    }
+
+    @Test
+    public void testCleanWithInvalidCharset() throws Exception {
+        String charsetName = "INVALID";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenThrow(new IllegalCharsetNameException(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertNull(result);
+    }
+
+    @Test
+    public void testCleanWithNullInput() throws Exception {
+        String charsetName = null;
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenThrow(new IllegalArgumentException());
+        String result = charsetUtils.clean(charsetName);
+        assertNull(result);
+    }
+
+    @Test
+    public void testCleanWithWhitespace() throws Exception {
+        String charsetName = "  UTF-8  ";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertEquals(charsetName.trim(), result);
+    }
+
+    @Test
+    public void testCleanWithISO8859Pattern() throws Exception {
+        String charsetName = "ISO 8859-1";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertEquals("iso-8859-1", result);
+    }
+
+    @Test
+    public void testCleanWithCPNamePattern() throws Exception {
+        String charsetName = "cp-1252";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertEquals("cp1252", result);
+    }
+
+    @Test
+    public void testCleanWithWINNamePattern() throws Exception {
+        String charsetName = "win-1252";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertEquals("windows-1252", result);
+    }
+
+    @Test
+    public void testCleanWithIgnoreCase() throws Exception {
+        String charsetName = "utf-8";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertEquals(charsetName, result);
+    }
+
+    @Test
+    public void testCleanWithNone() throws Exception {
+        String charsetName = "none";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenThrow(new IllegalCharsetNameException(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertNull(result);
+    }
+
+    @Test
+    public void testCleanWithNo() throws Exception {
+        String charsetName = "no";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenThrow(new IllegalCharsetNameException(charsetName));
+        String result = charsetUtils.clean(charsetName);
+        assertNull(result);
+    }
+
+    @Test
+    public void testCleanWithICU() throws Exception {
+        String charsetName = "UTF-8";
+        when(forNameMethod.invoke(charsetUtils, charsetName)).thenReturn(Charset.forName(charsetName));
+        Method getCharsetICUMethod = CharsetUtils.class.getDeclaredMethod("getCharsetICU");
+        getCharsetICUMethod.setAccessible(true);
+        when(getCharsetICUMethod.invoke(charsetUtils)).thenReturn(null);
+        String result = charsetUtils.clean(charsetName);
+        assertEquals(charsetName, result);
+    }
+}
+
+--------------------------------------------
+Error in testCleanWithWINNamePattern(): line 84 : org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/native/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+Error in testCleanWithCPNamePattern(): line 76 : org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/native/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+Error in testCleanWithValidCharset(): line 36 : org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/native/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+Error in testCleanWithNo(): line 108 : java.nio.charset.IllegalCharsetNameException: no
+Error in testCleanWithNone(): line 100 : java.nio.charset.IllegalCharsetNameException: none
+Error in testCleanWithICU(): line 116 : org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/native/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+Error in testCleanWithInvalidCharset(): line 44 : java.nio.charset.UnsupportedCharsetException: INVALID
+Error in testCleanWithWhitespace(): line 60 : org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/native/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+Error in testCleanWithIgnoreCase(): line 92 : org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+when() requires an argument which has to be 'a method call on a mock'.
+For example:
+    when(mock.getArticles()).thenReturn(articles);
+
+Also, this error might show up because:
+1. you stub either of: final/private/native/equals()/hashCode() methods.
+   Those methods *cannot* be stubbed/verified.
+   Mocking methods declared on non-public parent classes is not supported.
+2. inside when() you don't call method on mock but on some other object.
+
+Error in testCleanWithISO8859Pattern(): line 68 : java.nio.charset.UnsupportedCharsetException: ISO
+Error in testCleanWithNullInput(): line 52 : java.lang.IllegalArgumentException

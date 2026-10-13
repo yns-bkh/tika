@@ -1,0 +1,119 @@
+package org.apache.tika.io;
+
+import org.apache.tika.io.LookaheadInputStream;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.io.IOException;
+import java.io.InputStream;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+public class LookaheadInputStream_skip_4_1_Test {
+
+    @Mock
+    private InputStream mockStream;
+
+    private LookaheadInputStream lookaheadInputStream;
+
+    @BeforeEach
+    public void setUp() {
+        lookaheadInputStream = new LookaheadInputStream(mockStream, 10);
+    }
+
+    @Test
+    public void testSkip() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(5);
+        when(mockStream.available()).thenReturn(0);
+        long result = lookaheadInputStream.skip(3);
+        assertEquals(3, result);
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithAvailable() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(5);
+        when(mockStream.available()).thenReturn(5);
+        long result = lookaheadInputStream.skip(3);
+        assertEquals(3, result);
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithNoAvailable() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(-1);
+        when(mockStream.available()).thenReturn(0);
+        long result = lookaheadInputStream.skip(3);
+        assertEquals(0, result);
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithNegativeInput() throws IOException {
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(5);
+        when(mockStream.available()).thenReturn(0);
+        long result = lookaheadInputStream.skip(-3);
+        assertEquals(0, result);
+        verify(mockStream, never()).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, never()).available();
+    }
+}
+
+--------------------------------------------
+Error in testSkip(): line 33 : Wanted but not invoked:
+mockStream.available();
+-> at java.base/java.io.InputStream.available(InputStream.java:652)
+
+However, there were exactly 2 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+
+Error in testSkipWithAvailable(): line 43 : Wanted but not invoked:
+mockStream.available();
+-> at java.base/java.io.InputStream.available(InputStream.java:652)
+
+However, there were exactly 2 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+
+Error in testSkipWithNoAvailable(): line 53 : Wanted but not invoked:
+mockStream.available();
+-> at java.base/java.io.InputStream.available(InputStream.java:652)
+
+However, there were exactly 3 interactions with this mock:
+mockStream.mark(10);
+-> at org.apache.tika.io.LookaheadInputStream.<init>(LookaheadInputStream.java:68)
+
+mockStream.read(
+    [(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00],
+    0,
+    10
+);
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82)
+
+mockStream.reset();
+-> at org.apache.tika.io.LookaheadInputStream.close(LookaheadInputStream.java:75)
+
+
+Error in testSkipWithNegativeInput(): line 61 : org.opentest4j.AssertionFailedError: expected: <0> but was: <-3>

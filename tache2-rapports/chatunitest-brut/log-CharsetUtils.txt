@@ -1,0 +1,139 @@
+[INFO] Maveniverse Nisse 0.9.4 loaded
+[INFO] Nisse injecting 40 properties into User Properties
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.apache.tika:tika-core:bundle:4.0.0-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ org.apache.tika:tika-parent:${revision}, /home/bkh/projects/udem/tika/tika-parent/pom.xml, line 34, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] No need for inlining
+[INFO] 
+[INFO] ---------------------< org.apache.tika:tika-core >----------------------
+[INFO] Building Apache Tika core 4.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] -------------------------------[ bundle ]-------------------------------
+[INFO] 
+[INFO] --- chatunitest:2.1.1:class (default-cli) @ tika-core ---
+[INFO] 
+========================== Configuration ==========================
+
+[INFO] PluginSign >>>>CHATUNITEST
+[INFO]  Multithreading >>>> false
+[INFO]  Stop when success >>>> true
+[INFO]  No execution >>>> false
+[INFO]  Enable Merge >>>> true
+[INFO]  --- 
+[INFO]  TestOutput Path >>> /home/bkh/projects/udem/tika/tika-core/chatunitest-tests/tika-parent/tika-core
+[INFO]  TmpOutput Path >>> /tmp/chatunitest-info/tika-parent/tika-core
+[INFO]  CounterExample Path >>> /home/bkh/projects/udem/tika/tika-core/smartut-tests
+[INFO]  Prompt path >>> null
+[INFO]  Example path >>> /home/bkh/projects/udem/tika/tika-core/exampleUsage.json
+[INFO]  --- 
+[INFO]  Model >>> CODE_QWEN
+[INFO]  Url >>> http://localhost:11434/v1/chat/completions
+[INFO]  MaxPromptTokens >>> 6000
+[INFO]  MaxResponseTokens >>> 1024
+[INFO]  MinErrorTokens >>> 500
+[INFO]  MaxThreads >>> 80
+[INFO]  TestNumber >>> 2
+[INFO]  MaxRounds >>> 3
+[INFO]  MinErrorTokens >>> 500
+[INFO]  MaxPromptTokens >>> 6000
+[INFO]  SleepTime >>> 0
+[INFO]  DependencyDepth >>> 1
+[INFO]  SampleSize >>> 10
+[INFO]  PhaseType >>> CHATUNITEST
+[INFO] 
+===================================================================
+
+[INFO] 
+==========================
+[CHATUNITEST] Parse output already exists, skip parsing!
+[INFO] 
+==========================
+[CHATUNITEST] Generating tests for class < org.apache.tika.utils.CharsetUtils > ...
+[INFO] Skip method: initCommonCharsets(String[]) in class: org.apache.tika.utils.CharsetUtils
+[INFO] 
+==========================
+[CHATUNITEST] Generating test for method < isSupported > number 0...
+
+[INFO] Generating test for method < isSupported > round 0 ...
+In TestProcessor.removeCorrectTest: No test case left
+In TestProcessor.removeCorrectTest: No test case left
+[INFO] Test for method < isSupported > execution failed round 0
+[INFO] Fixing test for method < isSupported > round 1 ...
+In TestProcessor.removeCorrectTest: No test case left
+In TestProcessor.removeCorrectTest: No test case left
+[INFO] Test for method < isSupported > execution failed round 1
+[INFO] Fixing test for method < isSupported > round 2 ...
+In TestProcessor.removeCorrectTest: No test case left
+In TestProcessor.removeCorrectTest: No test case left
+[INFO] Test for method < isSupported > execution failed round 2
+[INFO] 
+==========================
+[CHATUNITEST] Generating test for method < isSupported > number 1...
+
+[INFO] Generating test for method < isSupported > round 0 ...
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/home/bkh/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.7/byte-buddy-agent-1.14.7.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Processed test for method < isSupported > generated successfully round 0
+[INFO] 
+==========================
+[CHATUNITEST] Completed Method Jobs:   [ 1 /  0]
+[INFO] 
+==========================
+[CHATUNITEST] Generating test for method < clean > number 0...
+
+[INFO] Generating test for method < clean > round 0 ...
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Test for method < clean > execution failed round 0
+[INFO] Fixing test for method < clean > round 1 ...
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Test for method < clean > execution failed round 1
+[INFO] Fixing test for method < clean > round 2 ...
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Test for method < clean > execution failed round 2
+[INFO] 
+==========================
+[CHATUNITEST] Generating test for method < clean > number 1...
+
+[INFO] Generating test for method < clean > round 0 ...
+[INFO] Test for method < clean > compilation failed round 0
+[INFO] Fixing test for method < clean > round 1 ...
+[INFO] Test for method < clean > compilation failed round 1
+[INFO] Fixing test for method < clean > round 2 ...
+[INFO] Test for method < clean > compilation failed round 2
+[INFO] 
+==========================
+[CHATUNITEST] Completed Method Jobs:   [ 2 /  0]
+[INFO] 
+==========================
+[CHATUNITEST] Generating test for method < forName > number 0...
+
+[INFO] Generating test for method < forName > round 0 ...
+[INFO] Test for method < forName > compilation failed round 0
+[INFO] Fixing test for method < forName > round 1 ...
+[ERROR] In AskGPT.askChatGPT: java.net.SocketTimeoutException: timeout
+[INFO] Test for method < forName > compilation failed round 1
+[INFO] Fixing test for method < forName > round 2 ...
+[INFO] Test for method < forName > compilation failed round 2
+[INFO] 
+==========================
+[CHATUNITEST] Generating test for method < forName > number 1...
+
+[INFO] Generating test for method < forName > round 0 ...
+[INFO] Test for method < forName > compilation failed round 0
+[INFO] Fixing test for method < forName > round 1 ...
+[INFO] Test for method < forName > compilation failed round 1
+[INFO] Fixing test for method < forName > round 2 ...
+[ERROR] In AskGPT.askChatGPT: java.net.SocketTimeoutException: timeout
+[ERROR] In AskGPT.askChatGPT: java.net.SocketTimeoutException: timeout
+[ERROR] In AskGPT.askChatGPT: java.net.SocketTimeoutException: timeout

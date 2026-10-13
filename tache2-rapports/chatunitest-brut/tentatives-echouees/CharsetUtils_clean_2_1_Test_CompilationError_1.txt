@@ -1,0 +1,143 @@
+package org.apache.tika.utils;
+
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static java.util.Locale.ENGLISH;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CharsetUtils_clean_2_1_Test {
+
+    private CharsetUtils charsetUtils;
+
+    private Method getCharsetICU;
+
+    private Method isSupportedICU;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        charsetUtils = new CharsetUtils();
+        getCharsetICU = CharsetUtils.class.getDeclaredMethod("getCharsetICU");
+        isSupportedICU = CharsetUtils.class.getDeclaredMethod("isSupportedICU");
+        getCharsetICU.setAccessible(true);
+        isSupportedICU.setAccessible(true);
+    }
+
+    @Test
+    public void testClean_validCharset() throws Exception {
+        String charsetName = "UTF-8";
+        String result = charsetUtils.clean(charsetName);
+        assertEquals(charsetName, result);
+    }
+
+    @Test
+    public void testClean_invalidCharset() throws Exception {
+        String charsetName = "INVALID";
+        String result = charsetUtils.clean(charsetName);
+        assertNull(result);
+    }
+
+    @Test
+    public void testClean_iso8859Pattern() throws Exception {
+        String charsetName = "ISO 8859-1";
+        String result = charsetUtils.clean(charsetName);
+        assertEquals("iso-8859-1", result);
+    }
+
+    @Test
+    public void testClean_cpPattern() throws Exception {
+        String charsetName = "cp-1252";
+        String result = charsetUtils.clean(charsetName);
+        assertEquals("cp1252", result);
+    }
+
+    @Test
+    public void testClean_winPattern() throws Exception {
+        String charsetName = "win-1252";
+        String result = charsetUtils.clean(charsetName);
+        assertEquals("windows-1252", result);
+    }
+
+    @Test
+    public void testClean_getCharsetICU() throws Exception {
+        String charsetName = "UTF-8";
+        Method getCharsetICU = CharsetUtils.class.getDeclaredMethod("getCharsetICU");
+        getCharsetICU.setAccessible(true);
+        Charset charset = (Charset) getCharsetICU.invoke(null, charsetName);
+        assertNotNull(charset);
+    }
+
+    @Test
+    public void testClean_isSupportedICU() throws Exception {
+        String charsetName = "UTF-8";
+        Method isSupportedICU = CharsetUtils.class.getDeclaredMethod("isSupportedICU");
+        isSupportedICU.setAccessible(true);
+        boolean result = (boolean) isSupportedICU.invoke(null, charsetName);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testClean_exceptionHandling() throws Exception {
+        String charsetName = null;
+        String result = charsetUtils.clean(charsetName);
+        assertNull(result);
+    }
+
+    @Test
+    public void testClean_illegalCharsetNameException() throws Exception {
+        String charsetName = "INVALID";
+        Method forName = CharsetUtils.class.getDeclaredMethod("forName", String.class);
+        forName.setAccessible(true);
+        assertThrows(IllegalCharsetNameException.class, () -> forName.invoke(null, charsetName));
+    }
+
+    @Test
+    public void testClean_commonCharsets() throws Exception {
+        Map<String, Charset> commonCharsets = new HashMap<>();
+        commonCharsets.put("utf-8", Charset.forName("UTF-8"));
+        commonCharsets.put("iso-8859-1", Charset.forName("ISO-8859-1"));
+        commonCharsets.put("cp1252", Charset.forName("CP1252"));
+        commonCharsets.put("windows-1252", Charset.forName("Windows-1252"));
+        CharsetUtils.COMMON_CHARSETS = commonCharsets;
+        String charsetName = "UTF-8";
+        String result = charsetUtils.clean(charsetName);
+        assertEquals(charsetName, result);
+    }
+
+    @Test
+    public void testClean_getCharsetICU_exceptionHandling() throws Exception {
+        String charsetName = "INVALID";
+        Method getCharsetICU = CharsetUtils.class.getDeclaredMethod("getCharsetICU");
+        getCharsetICU.setAccessible(true);
+        assertThrows(InvocationTargetException.class, () -> getCharsetICU.invoke(null, charsetName));
+    }
+
+    @Test
+    public void testClean_isSupportedICU_exceptionHandling() throws Exception {
+        String charsetName = "INVALID";
+        Method isSupportedICU = CharsetUtils.class.getDeclaredMethod("isSupportedICU");
+        isSupportedICU.setAccessible(true);
+    }
+}
+
+--------------------------------------------
+Error in CharsetUtils_clean_2_1_Test: line -1 : Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+Error in CharsetUtils_clean_2_1_Test: line -1 : Supported source version 'RELEASE_17' from annotation processor 'org.apache.tika.annotation.TikaComponentProcessor' less than -source '21'
+Error in CharsetUtils_clean_2_1_Test: line 112 : COMMON_CHARSETS has private access in org.apache.tika.utils.CharsetUtils

@@ -1,0 +1,133 @@
+package org.apache.tika.utils;
+
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static java.util.Locale.ENGLISH;
+import java.lang.reflect.InvocationTargetException;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CharsetUtils_forName_3_0_Test {
+
+    private CharsetUtils charsetUtils;
+
+    private Method getCharsetICU;
+
+    private Method isSupportedICU;
+
+    @BeforeEach
+    public void setUp() throws NoSuchMethodException {
+        charsetUtils = new CharsetUtils();
+        getCharsetICU = CharsetUtils.class.getDeclaredMethod("getCharsetICU");
+        isSupportedICU = CharsetUtils.class.getDeclaredMethod("isSupportedICU");
+        getCharsetICU.setAccessible(true);
+        isSupportedICU.setAccessible(true);
+    }
+
+    @Test
+    public void testForName_withNullName() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            charsetUtils.forName(null);
+        });
+    }
+
+    @Test
+    public void testForName_withInvalidName() {
+        assertThrows(IllegalCharsetNameException.class, () -> {
+            charsetUtils.forName("invalid");
+        });
+    }
+
+    @Test
+    public void testForName_withValidName() throws Exception {
+        String name = "UTF-8";
+        Charset expectedCharset = Charset.forName(name);
+        when(getCharsetICU.invoke(null, name)).thenReturn(expectedCharset);
+        Charset result = charsetUtils.forName(name);
+        assertEquals(expectedCharset, result);
+        verify(getCharsetICU).invoke(null, name);
+    }
+
+    @Test
+    public void testForName_withCommonCharset() throws Exception {
+        String name = "UTF-8";
+        Charset expectedCharset = Charset.forName(name);
+        Map<String, Charset> commonCharsets = new HashMap<>();
+        commonCharsets.put(name.toLowerCase(Locale.ENGLISH), expectedCharset);
+        when(CharsetUtils.COMMON_CHARSETS.get(name.toLowerCase(Locale.ENGLISH))).thenReturn(expectedCharset);
+        Charset result = charsetUtils.forName(name);
+        assertEquals(expectedCharset, result);
+        verify(CharsetUtils.COMMON_CHARSETS).get(name.toLowerCase(Locale.ENGLISH));
+    }
+
+    @Test
+    public void testForName_withISONamePattern() throws Exception {
+        String name = "ISO 8859-1";
+        Charset expectedCharset = Charset.forName("iso-8859-1");
+        when(getCharsetICU.invoke(null, "iso-8859-1")).thenReturn(expectedCharset);
+        Charset result = charsetUtils.forName(name);
+        assertEquals(expectedCharset, result);
+        verify(getCharsetICU).invoke(null, "iso-8859-1");
+    }
+
+    @Test
+    public void testForName_withCPNamePattern() throws Exception {
+        String name = "CP1252";
+        Charset expectedCharset = Charset.forName("cp1252");
+        when(getCharsetICU.invoke(null, "cp1252")).thenReturn(expectedCharset);
+        Charset result = charsetUtils.forName(name);
+        assertEquals(expectedCharset, result);
+        verify(getCharsetICU).invoke(null, "cp1252");
+    }
+
+    @Test
+    public void testForName_withWINNamePattern() throws Exception {
+        String name = "WIN1252";
+        Charset expectedCharset = Charset.forName("windows-1252");
+        when(getCharsetICU.invoke(null, "windows-1252")).thenReturn(expectedCharset);
+        Charset result = charsetUtils.forName(name);
+        assertEquals(expectedCharset, result);
+        verify(getCharsetICU).invoke(null, "windows-1252");
+    }
+
+    @Test
+    public void testForName_withReflection() throws Exception {
+        String name = "UTF-8";
+        Charset expectedCharset = Charset.forName(name);
+        Map<String, Charset> commonCharsets = new HashMap<>();
+        commonCharsets.put(name.toLowerCase(Locale.ENGLISH), expectedCharset);
+        Field field = CharsetUtils.class.getDeclaredField("COMMON_CHARSETS");
+        field.setAccessible(true);
+        field.set(null, commonCharsets);
+        Method method = CharsetUtils.class.getDeclaredMethod("getCharsetICU");
+        method.setAccessible(true);
+        when(method.invoke(null, name)).thenReturn(expectedCharset);
+        Charset result = CharsetUtils.forName(name);
+        assertEquals(expectedCharset, result);
+    }
+}
+
+--------------------------------------------
+Error in CharsetUtils_forName_3_0_Test: line -1 : Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+Error in CharsetUtils_forName_3_0_Test: line -1 : Supported source version 'RELEASE_17' from annotation processor 'org.apache.tika.annotation.TikaComponentProcessor' less than -source '21'
+Error in CharsetUtils_forName_3_0_Test: line 67 : COMMON_CHARSETS has private access in org.apache.tika.utils.CharsetUtils
+Error in CharsetUtils_forName_3_0_Test: line 70 : COMMON_CHARSETS has private access in org.apache.tika.utils.CharsetUtils
+Error in CharsetUtils_forName_3_0_Test: line 109 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.utils.CharsetUtils_forName_3_0_Test

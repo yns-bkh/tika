@@ -1,0 +1,87 @@
+package org.apache.tika.io;
+
+import org.apache.tika.io.LookaheadInputStream;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.io.IOException;
+import java.io.InputStream;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+public class LookaheadInputStream_read_2_0_Test {
+
+    @Mock
+    private InputStream mockStream;
+
+    private LookaheadInputStream lookaheadInputStream;
+
+    @BeforeEach
+    public void setUp() {
+        lookaheadInputStream = new LookaheadInputStream(mockStream, 10);
+    }
+
+    @Test
+    public void testReadWhenBuffered() throws IOException {
+        when(mockStream.available()).thenReturn(1);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(1);
+        lookaheadInputStream.read();
+        verify(mockStream, never()).read(any(byte[].class), anyInt(), anyInt());
+    }
+
+    @Test
+    public void testReadWhenStreamIsNull() throws IOException {
+        LookaheadInputStream lookaheadInputStream = new LookaheadInputStream(null, 10);
+        assertThrows(NullPointerException.class, () -> {
+            lookaheadInputStream.read();
+        });
+    }
+
+    @Test
+    public void testReadWhenStreamThrowsIOException() throws IOException {
+        when(mockStream.available()).thenReturn(1);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenThrow(new IOException());
+        assertThrows(IOException.class, () -> {
+            lookaheadInputStream.read();
+        });
+    }
+
+    @Test
+    public void testReadWhenNotBuffered() throws IOException {
+        when(mockStream.available()).thenReturn(0);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(1);
+        lookaheadInputStream.read();
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+    }
+
+    @Test
+    public void testReadWhenStreamReadsZero() throws IOException {
+        when(mockStream.available()).thenReturn(0);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(0);
+        assertEquals(-1, lookaheadInputStream.read());
+    }
+
+    @Test
+    public void testReadWhenStreamReadsNegativeOne() throws IOException {
+        when(mockStream.available()).thenReturn(0);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(-1);
+        lookaheadInputStream.close();
+        assertEquals(-1, lookaheadInputStream.read());
+    }
+}
+
+--------------------------------------------
+Error in testReadWhenBuffered(): line 31 : org.mockito.exceptions.verification.NeverWantedButInvoked: 
+mockStream.read(
+    <any byte[]>,
+    <any integer>,
+    <any integer>
+);
+Never wanted here:
+-> at java.base/java.io.InputStream.read(InputStream.java:282)
+But invoked here:
+-> at org.apache.tika.io.LookaheadInputStream.fill(LookaheadInputStream.java:82) with arguments: [[B@112fc33a, 0, 10]
+
+Error in testReadWhenStreamIsNull(): line 37 : org.opentest4j.AssertionFailedError: Expected java.lang.NullPointerException to be thrown, but nothing was thrown.

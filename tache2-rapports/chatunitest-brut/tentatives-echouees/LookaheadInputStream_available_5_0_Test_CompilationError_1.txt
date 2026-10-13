@@ -1,0 +1,103 @@
+package org.apache.tika.io;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.io.IOException;
+import java.io.InputStream;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+public class LookaheadInputStream_available_5_0_Test {
+
+    @Mock
+    private InputStream stream;
+
+    private LookaheadInputStream lookaheadInputStream;
+
+    @BeforeEach
+    public void setUp() {
+        lookaheadInputStream = new LookaheadInputStream(stream, 10);
+    }
+
+    @Test
+    public void testAvailable() throws IOException {
+        when(stream.available()).thenReturn(15);
+        assertEquals(5, lookaheadInputStream.available());
+    }
+
+    @Test
+    public void testAvailableWithNoBufferedData() throws IOException {
+        when(stream.available()).thenReturn(0);
+        assertEquals(0, lookaheadInputStream.available());
+    }
+
+    @Test
+    public void testAvailableWithNegativeBufferedData() throws IOException {
+        when(stream.available()).thenReturn(-5);
+        assertEquals(-5, lookaheadInputStream.available());
+    }
+
+    @Test
+    public void testAvailableWithBufferedData() throws IOException {
+        Field bufferedField = LookaheadInputStream.class.getDeclaredField("buffered");
+        bufferedField.setAccessible(true);
+        bufferedField.set(lookaheadInputStream, 10);
+        Field positionField = LookaheadInputStream.class.getDeclaredField("position");
+        positionField.setAccessible(true);
+        positionField.set(lookaheadInputStream, 5);
+        assertEquals(5, lookaheadInputStream.available());
+    }
+
+    @Test
+    public void testAvailableWithBufferedDataAndPosition() throws IOException {
+        Field bufferedField = LookaheadInputStream.class.getDeclaredField("buffered");
+        bufferedField.setAccessible(true);
+        bufferedField.set(lookaheadInputStream, 10);
+        Field positionField = LookaheadInputStream.class.getDeclaredField("position");
+        positionField.setAccessible(true);
+        positionField.set(lookaheadInputStream, 10);
+        assertEquals(0, lookaheadInputStream.available());
+    }
+
+    @Test
+    public void testAvailableWithBufferedDataAndPositionNegative() throws IOException {
+        Field bufferedField = LookaheadInputStream.class.getDeclaredField("buffered");
+        bufferedField.setAccessible(true);
+        bufferedField.set(lookaheadInputStream, 10);
+        Field positionField = LookaheadInputStream.class.getDeclaredField("position");
+        positionField.setAccessible(true);
+        positionField.set(lookaheadInputStream, 15);
+        assertEquals(-5, lookaheadInputStream.available());
+    }
+}
+
+--------------------------------------------
+Error in LookaheadInputStream_available_5_0_Test: line -1 : Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+Error in LookaheadInputStream_available_5_0_Test: line -1 : Supported source version 'RELEASE_17' from annotation processor 'org.apache.tika.annotation.TikaComponentProcessor' less than -source '21'
+Error in LookaheadInputStream_available_5_0_Test: line 45 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.io.LookaheadInputStream_available_5_0_Test
+Error in LookaheadInputStream_available_5_0_Test: line 48 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.io.LookaheadInputStream_available_5_0_Test
+Error in LookaheadInputStream_available_5_0_Test: line 56 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.io.LookaheadInputStream_available_5_0_Test
+Error in LookaheadInputStream_available_5_0_Test: line 59 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.io.LookaheadInputStream_available_5_0_Test
+Error in LookaheadInputStream_available_5_0_Test: line 67 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.io.LookaheadInputStream_available_5_0_Test
+Error in LookaheadInputStream_available_5_0_Test: line 70 : cannot find symbol
+  symbol:   class Field
+  location: class org.apache.tika.io.LookaheadInputStream_available_5_0_Test

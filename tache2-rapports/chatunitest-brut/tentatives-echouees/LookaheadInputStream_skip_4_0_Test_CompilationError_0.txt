@@ -1,0 +1,94 @@
+package org.apache.tika.io;
+
+import org.apache.tika.io.LookaheadInputStream;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.io.IOException;
+import java.io.InputStream;
+import org.mockito.*;
+import org.junit.jupiter.api.*;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+public class LookaheadInputStream_skip_4_0_Test {
+
+    @Mock
+    private InputStream mockStream;
+
+    private LookaheadInputStream lookaheadInputStream;
+
+    @BeforeEach
+    public void setUp() {
+        lookaheadInputStream = new LookaheadInputStream(mockStream, 10);
+    }
+
+    @Test
+    public void testSkip() throws IOException {
+        when(mockStream.available()).thenReturn(5);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(3);
+        long result = lookaheadInputStream.skip(7);
+        assertEquals(3, result);
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithAvailable() throws IOException {
+        when(mockStream.available()).thenReturn(10);
+        long result = lookaheadInputStream.skip(7);
+        assertEquals(7, result);
+        verify(mockStream, never()).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithBuffered() throws IOException {
+        lookaheadInputStream.position = 5;
+        when(mockStream.available()).thenReturn(5);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(3);
+        long result = lookaheadInputStream.skip(7);
+        assertEquals(3, result);
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithNoBuffered() throws IOException {
+        lookaheadInputStream.position = 10;
+        when(mockStream.available()).thenReturn(5);
+        when(mockStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(3);
+        long result = lookaheadInputStream.skip(7);
+        assertEquals(3, result);
+        verify(mockStream, times(1)).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, times(1)).available();
+    }
+
+    @Test
+    public void testSkipWithNegative() throws IOException {
+        long result = lookaheadInputStream.skip(-1);
+        assertEquals(0, result);
+        verify(mockStream, never()).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, never()).available();
+    }
+
+    @Test
+    public void testSkipWithZero() throws IOException {
+        long result = lookaheadInputStream.skip(0);
+        assertEquals(0, result);
+        verify(mockStream, never()).read(any(byte[].class), anyInt(), anyInt());
+        verify(mockStream, never()).available();
+    }
+}
+
+--------------------------------------------
+Error in LookaheadInputStream_skip_4_0_Test: line -1 : Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+Error in LookaheadInputStream_skip_4_0_Test: line -1 : Supported source version 'RELEASE_17' from annotation processor 'org.apache.tika.annotation.TikaComponentProcessor' less than -source '21'
+Error in LookaheadInputStream_skip_4_0_Test: line 47 : position has private access in org.apache.tika.io.LookaheadInputStream
+Error in LookaheadInputStream_skip_4_0_Test: line 58 : position has private access in org.apache.tika.io.LookaheadInputStream
