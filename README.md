@@ -353,7 +353,7 @@ Workflow : [.github/workflows/tache2.yml](.github/workflows/tache2.yml). Il se d
 
 Les workflows d'origine de Tika ne se déclenchent que sur `main` et ne sont donc pas exécutés sur cette branche.
 
-Dernière exécution : voir l'onglet [Actions](https://github.com/yns-bkh/tika/actions/workflows/tache2.yml) du dépôt.
+Dernière exécution vérifiée : [run 38442437426](https://github.com/yns-bkh/tika/actions/runs/38442437426), réussie : 66 tests, 0 échec, 1 désactivé ; pitest 56/58 mutants tués (97 %). Toutes les exécutions : [onglet Actions](https://github.com/yns-bkh/tika/actions/workflows/tache2.yml).
 
 ## 12. Déclaration d'utilisation de l'IA
 
