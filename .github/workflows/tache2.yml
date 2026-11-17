@@ -2,7 +2,7 @@ name: IFT3913 - tests, mutation et Semgrep
 
 on:
   push:
-    branches: [ tache2, tache3 ]
+    branches: [ tache2, tache3, tache3-rickroll-demo ]
   pull_request:
     branches: [ tache2, tache3 ]
   workflow_dispatch:
