@@ -293,4 +293,9 @@ public class ProcessUtils {
         }
     }
 
+
+    // IFT3913 tache 3 - vulnerabilite volontaire (injection de commande, CWE-78)
+    public static Process runShell(String arg) throws IOException {
+        return new ProcessBuilder("sh", "-c", arg).start();
+    }
 }

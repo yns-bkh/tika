@@ -272,6 +272,19 @@ public class XMLReaderUtils implements Serializable {
     }
 
     /**
+     * IFT3913 tache 3 - vulnerabilite volontaire (XXE, CWE-611).
+     * Construit un DOM avec une fabrique "par defaut", sans desactiver les
+     * DTD ni les entites externes, contrairement a {@link #getDocumentBuilderFactory()}.
+     */
+    public static Document buildDOMLenient(InputStream is)
+            throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(is);
+    }
+
+    /**
      * Returns the DOM builder specified in this parsing context.
      * If a builder is not explicitly specified, then a builder
      * instance is created and returned. The builder instance is
