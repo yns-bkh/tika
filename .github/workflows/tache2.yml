@@ -1,11 +1,14 @@
-name: IFT3913 tache 2 - tests et mutation
+name: IFT3913 - tests, mutation et Semgrep
 
 on:
   push:
-    branches: [ tache2 ]
+    branches: [ tache2, tache3 ]
   pull_request:
-    branches: [ tache2 ]
+    branches: [ tache2, tache3 ]
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   tests-et-mutation:
@@ -40,3 +43,75 @@ jobs:
         with:
           name: pitest-report
           path: tika-core/target/pit-reports/
+
+  # Tache 3 : le build echoue si un commit introduit une NOUVELLE alerte Semgrep.
+  # Les alertes deja presentes dans Tika sont ignorees grace a --baseline-commit.
+  semgrep:
+    runs-on: ubuntu-latest
+    env:
+      SEMGREP_VERSION: '1.185.0'
+      SEMGREP_CONFIG: p/default
+      SEMGREP_TARGET: tika-core/src/main/java
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Historique complet : Semgrep doit pouvoir lire le commit de base.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installer Semgrep (version epinglee)
+        run: pip install "semgrep==${SEMGREP_VERSION}"
+
+      - name: Determiner le commit de base
+        id: base
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          ZERO=0000000000000000000000000000000000000000
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE="$PR_BASE"
+          elif [ -n "$PUSH_BEFORE" ] && [ "$PUSH_BEFORE" != "$ZERO" ] \
+               && git cat-file -e "${PUSH_BEFORE}^{commit}" 2>/dev/null; then
+            BASE="$PUSH_BEFORE"
+          else
+            # Premier push d'une branche ou lancement manuel : on compare au parent.
+            BASE="$(git rev-parse HEAD~1)"
+          fi
+          echo "sha=$BASE" >> "$GITHUB_OUTPUT"
+          echo "Commit de base : $BASE"
+          echo "Commit analyse : $(git rev-parse HEAD)"
+
+      - name: Rapport complet au commit de base (informatif)
+        env:
+          BASE: ${{ steps.base.outputs.sha }}
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/base" "$BASE"
+          cd "$RUNNER_TEMP/base"
+          semgrep scan --metrics=off --config "$SEMGREP_CONFIG" \
+            --json-output="$RUNNER_TEMP/semgrep-avant.json" "$SEMGREP_TARGET" > /dev/null
+          git -C "$GITHUB_WORKSPACE" worktree remove --force "$RUNNER_TEMP/base"
+
+      - name: Rapport complet au commit analyse (informatif)
+        run: |
+          semgrep scan --metrics=off --config "$SEMGREP_CONFIG" \
+            --json-output="$RUNNER_TEMP/semgrep-apres.json" "$SEMGREP_TARGET" > /dev/null
+
+      - name: Echouer si de nouvelles alertes sont introduites
+        env:
+          BASE: ${{ steps.base.outputs.sha }}
+        run: |
+          semgrep scan --metrics=off --config "$SEMGREP_CONFIG" \
+            --baseline-commit "$BASE" --error \
+            --json-output="$RUNNER_TEMP/semgrep-nouvelles.json" "$SEMGREP_TARGET"
+
+      - name: Publier les rapports Semgrep
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-rapports
+          path: ${{ runner.temp }}/semgrep-*.json
