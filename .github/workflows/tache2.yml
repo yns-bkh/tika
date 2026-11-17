@@ -33,6 +33,10 @@ jobs:
           -Dtest='LookaheadInputStream*Test,CharsetUtils*Test'
           -Dsurefire.failIfNoSpecifiedTests=false
 
+      - name: Rickroll si un test echoue
+        if: failure()
+        uses: ./.github/actions/rickroll
+
       - name: Analyse de mutation pitest
         working-directory: tika-core
         run: ../mvnw -B -ntp org.pitest:pitest-maven:mutationCoverage -Dcheckstyle.skip -Drat.skip

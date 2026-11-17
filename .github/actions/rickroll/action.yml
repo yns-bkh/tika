@@ -1,0 +1,16 @@
+name: Rickroll
+description: Affiche un rickroll dans les logs et le resume du job quand un test echoue.
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        RICKROLL_URL: https://youtu.be/dQw4w9WgXcQ
+      run: |
+        echo "::error title=Test en echec::Un test a echoue et tu viens de te faire rickroll : $RICKROLL_URL"
+        {
+          echo "## Un test a echoue"
+          echo ""
+          echo "Pour te consoler, [clique ici]($RICKROLL_URL)."
+        } >> "$GITHUB_STEP_SUMMARY"
